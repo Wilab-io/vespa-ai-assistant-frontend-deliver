@@ -1,0 +1,13 @@
+version: '3.9'
+services:
+  vespa-frontend:
+    build:
+      context: .
+    ports:
+      - "7860:7860"
+    environment:
+      - LOG_LEVEL=DEBUG
+    volumes:
+      - ./src:/app/src
+      - /app/src/static
+    command: python main.py

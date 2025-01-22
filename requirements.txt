@@ -1,0 +1,9 @@
+fastapi[all]>=0.115.6
+uvicorn>=0.31.0
+python-multipart>=0.0.12
+python-dotenv>=1.0.1
+starlette>=0.41.0
+httpx>=0.27.0
+python-fasthtml>=0.0.1
+shad4fast>=0.0.1
+lucide-fasthtml==0.0.9
