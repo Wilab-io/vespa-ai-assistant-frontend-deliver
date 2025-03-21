@@ -7,7 +7,7 @@ import logging
 from fasthtml.common import Redirect
 from src.services.api.types import ErrorResponse
 
-logger = logging.getLogger("vespa_app")
+logger = logging.getLogger("wilab_app")
 
 def login_required(route_handler):
     @wraps(route_handler)

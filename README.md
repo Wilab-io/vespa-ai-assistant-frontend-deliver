@@ -43,4 +43,3 @@ If you want to build the docker image and run the application, run the following
 ```bash
  docker compose up
 ```
-

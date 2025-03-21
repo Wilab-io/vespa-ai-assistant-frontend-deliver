@@ -16,7 +16,7 @@ def ConnectionSettings(endpoint_value=""):
                     TextInput(
                         type="text",
                         name="endpoint",
-                        placeholder="Enter Vespa connection URL",
+                        placeholder="Enter Wilab connection URL",
                         value=endpoint_value,
                         autofocus=not endpoint_value,
                         id="endpoint-input"

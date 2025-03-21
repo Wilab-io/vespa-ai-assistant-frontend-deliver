@@ -15,16 +15,16 @@ def ThemeToggle(variant="ghost", cls=None, **kwargs):
 def Logo():
     return Div(
         Img(
-            src="https://assets.vespa.ai/logos/vespa-logo-black.svg",
-            alt="Vespa Logo",
+            src="/static/img/wilab-logo.png",
+            alt="Wilab logo",
             cls="h-full dark:hidden",
         ),
         Img(
-            src="https://assets.vespa.ai/logos/vespa-logo-white.svg",
-            alt="Vespa Logo Dark Mode",
+            src="/static/img/wilab-logo-white.png",
+            alt="Wilab logo dark mode",
             cls="h-full hidden dark:block",
         ),
-        cls="h-[27px]",
+        cls="h-[40px]",
     )
 
 def Header(theme_toggle=False):

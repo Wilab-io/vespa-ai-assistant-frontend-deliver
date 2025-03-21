@@ -6,7 +6,7 @@ from pages.chat import Chat
 from pages.settings import Settings
 from src.pages.login import LoginPage
 from src.services.api.middleware import login_required
-from src.services.api.client import VespaAgentClient
+from src.services.api.client import WilabAgentClient
 from src.services.config.config_service import ConfigService
 from fasthtml.common import Redirect
 from src.components.layout.chat_history import ChatHistory
@@ -24,7 +24,7 @@ import csv
 import io
 from typing import List, Dict
 
-logger = logging.getLogger("vespa_app")
+logger = logging.getLogger("wilab_app")
 
 def setup_routes(app, rt):
     app.add_middleware(
@@ -36,7 +36,7 @@ def setup_routes(app, rt):
     )
 
     app.config_service = ConfigService()
-    app.client = VespaAgentClient(app.config_service)
+    app.client = WilabAgentClient(app.config_service)
 
     @rt("/login")
     async def get_login(request : Request):

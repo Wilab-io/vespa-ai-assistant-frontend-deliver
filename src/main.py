@@ -22,7 +22,7 @@ def run_mock_server():
 # Get log level from environment variable, default to INFO
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 # Configure logger
-logger = logging.getLogger("vespa_app")
+logger = logging.getLogger("wilab_app")
 logger.handlers.clear()
 handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(

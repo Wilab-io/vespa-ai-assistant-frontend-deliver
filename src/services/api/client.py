@@ -4,7 +4,7 @@ import httpx
 from services.config.config_service import ConfigService
 from src.services.api.types import AuthResult, AuthResponse, ErrorResponse, ConversationRequest, NewConversationResponse, ConversationResult, ConversationsResult, ConversationsResponse, UsersResponse, Conversation, NewConversationResult, LLMsResponse, LLMsResult, GenericActionResponse, GenericActionResult, UsersResult, User, UserResult, KnowledgeBase, KnowledgeBaseResult, KnowledgeBasesResponse
 
-class VespaAgentClient:
+class WilabAgentClient:
     def __init__(self, config_service: ConfigService):
         default_url = "http://localhost:8080"
         use_mock = os.getenv("MOCK_API", "false").lower() == "true"
@@ -13,7 +13,7 @@ class VespaAgentClient:
         self.base_url = config_service.get_connection_endpoint() or default_url
         self.use_mock = use_mock
         self.client = self._create_client()
-        self.logger = logging.getLogger("vespa_app")
+        self.logger = logging.getLogger("wilab_app")
 
     def _create_client(self) -> httpx.AsyncClient:
         return httpx.AsyncClient(
@@ -27,7 +27,7 @@ class VespaAgentClient:
 
     async def authenticate(self, username: str, password: str) -> AuthResult:
         """
-        Authenticate user with Vespa agent.
+        Authenticate user with Wilab agent.
         Returns a validated AuthResponse on success or ErrorResponse on failure.
         """
         self.logger.debug(f"Authenticating user: {username}")

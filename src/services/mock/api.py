@@ -8,12 +8,12 @@ import logging
 import asyncio
 from src.services.api.types import AuthResponse, AuthResult, ErrorResponse, User, ConversationRequest, NewConversationResponse, Conversation, ChatMessage, ConversationsResponse, UsersResponse, User, ConversationResult, ConversationsResult, LLM, LLMsResponse, LLMsResult, NewConversationResult, UserResult, GenericActionResponse, GenericActionResult, UsersResult, KnowledgeBase, KnowledgeBasesResponse, KnowledgeBasesResult, KnowledgeBaseResult
 
-app = FastAPI(title="Mock Vespa Agent API")
-logger = logging.getLogger("vespa_app")
+app = FastAPI(title="Mock Wilab Agent API")
+logger = logging.getLogger("Wilab_app")
 
 default_url = "http://localhost:8080"
 use_mock = os.getenv("MOCK_API", "false").lower() == "true"
-app.base_url = default_url if use_mock else os.getenv("VESPA_AGENT_URL", default_url)
+app.base_url = default_url if use_mock else os.getenv("Wilab_AGENT_URL", default_url)
 
 EVENT_CONTENT = "content"
 EVENT_END_OF_RESPONSE = "end_of_response"
@@ -531,7 +531,7 @@ mock_messages = [
         messageId=get_random_id(),
         sender="assistant",
         senderType="bot",
-        content="Hello! 👋 I'm your Vespa AI assistant. I can help you explore and analyze your data using your knowledge base and Elasticsearch.<br><br>",
+        content="Hello! 👋 I'm your Wilab AI assistant. I can help you explore and analyze your data using your knowledge base and Elasticsearch.<br><br>",
         timestamp="2024-01-01T00:00:00Z"
     ),
     ChatMessage(
@@ -581,6 +581,20 @@ mock_messages = [
         sender="assistant",
         senderType="bot",
         content="Based on my analysis, here's what I found:<br><br>",
+        timestamp="2024-01-01T00:00:00Z"
+    ),
+    ChatMessage(
+        messageId=get_random_id(),
+        sender="assistant",
+        senderType="bot",
+        content="<strong>📈 System Performance Dashboard:</strong><br>",
+        timestamp="2024-01-01T00:00:00Z"
+    ),
+    ChatMessage(
+        messageId=get_random_id(),
+        sender="assistant",
+        senderType="bot",
+        content="<img src=\"https://chartexpo.com/Content/Images/charts/Gauge-Chart-Analysis.jpg\" alt=\"System Performance Gauge Chart\" style=\"width: 100%; max-width: 600px;\"><br><br>",
         timestamp="2024-01-01T00:00:00Z"
     ),
     ChatMessage(
@@ -657,6 +671,20 @@ mock_messages = [
         messageId=get_random_id(),
         sender="assistant",
         senderType="bot",
+        content="Here's a video about KPIs that might interest you:<br><br>",
+        timestamp="2024-01-01T00:00:00Z"
+    ),
+    ChatMessage(
+        messageId=get_random_id(),
+        sender="assistant",
+        senderType="bot",
+        content="<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/soiChkomKmo\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe><br><br>",
+        timestamp="2024-01-01T00:00:00Z"
+    ),
+    ChatMessage(
+        messageId=get_random_id(),
+        sender="assistant",
+        senderType="bot",
         content="Would you like me to dive deeper into any of these aspects? 🤔",
         timestamp="2024-01-01T00:00:00Z"
     )
@@ -665,7 +693,7 @@ mock_messages = [
 mock_conversations = [
     Conversation(
         conversationId=get_random_id(),
-        title="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        title="Analyzing 3GPP Network Performance Metrics and Optimization Recommendations",
         updatedAt="2024-12-20T12:34:56Z",
         createdAt="2024-12-20T12:34:56Z",
         messages= [
@@ -680,7 +708,7 @@ mock_conversations = [
                 messageId=get_random_id(),
                 sender="assistant",
                 senderType="bot",
-                content="Hello! 👋 I'm your Vespa AI assistant. I can help you explore and analyze your data using your knowledge base and Elasticsearch.<br><br>",
+                content="Hello! 👋 I'm your Wilab AI assistant. I can help you explore and analyze your data using your knowledge base and Elasticsearch.<br><br>",
                 timestamp="2024-01-01T00:00:00Z"
             ),
             ChatMessage(
@@ -806,7 +834,7 @@ mock_conversations = [
     ),
     Conversation(
         conversationId=get_random_id(),
-        title="Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        title="ETSI Standards Compliance Analysis and Implementation Guidelines",
         updatedAt="2024-12-21T09:10:15Z",
         createdAt="2024-12-21T09:10:15Z",
         messages= [
@@ -821,7 +849,7 @@ mock_conversations = [
                 messageId=get_random_id(),
                 sender="assistant",
                 senderType="bot",
-                content="Hello! 👋 I'm your Vespa AI assistant. I can help you explore and analyze your data using your knowledge base and Elasticsearch.<br><br>",
+                content="Hello! 👋 I'm your Wilab AI assistant. I can help you explore and analyze your data using your knowledge base and Elasticsearch.<br><br>",
                 timestamp="2024-01-01T00:00:00Z"
             ),
             ChatMessage(
@@ -947,7 +975,7 @@ mock_conversations = [
     ),
     Conversation(
         conversationId=get_random_id(),
-        title="Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+        title="Network API Integration and Real-time Data Analysis",
         updatedAt="2024-12-20T12:34:56Z",
         createdAt="2024-12-20T12:34:56Z",
         messages= [
@@ -962,7 +990,7 @@ mock_conversations = [
                 messageId=get_random_id(),
                 sender="assistant",
                 senderType="bot",
-                content="Hello! 👋 I'm your Vespa AI assistant. I can help you explore and analyze your data using your knowledge base and Elasticsearch.<br><br>",
+                content="Hello! 👋 I'm your Wilab AI assistant. I can help you explore and analyze your data using your knowledge base and Elasticsearch.<br><br>",
                 timestamp="2024-01-01T00:00:00Z"
             ),
             ChatMessage(
@@ -1088,7 +1116,7 @@ mock_conversations = [
     ),
     Conversation(
         conversationId=get_random_id(),
-        title="Excepteur sint occaecat cupidatat non proident",
+        title="Database Access Patterns and Security Best Practices",
         updatedAt="2024-11-20T12:34:56Z",
         createdAt="2024-11-20T12:34:56Z",
         messages= [
@@ -1103,7 +1131,7 @@ mock_conversations = [
                 messageId=get_random_id(),
                 sender="assistant",
                 senderType="bot",
-                content="Hello! 👋 I'm your Vespa AI assistant. I can help you explore and analyze your data using your knowledge base and Elasticsearch.<br><br>",
+                content="Hello! 👋 I'm your Wilab AI assistant. I can help you explore and analyze your data using your knowledge base and Elasticsearch.<br><br>",
                 timestamp="2024-01-01T00:00:00Z"
             ),
             ChatMessage(
@@ -1229,7 +1257,7 @@ mock_conversations = [
     ),
     Conversation(
         conversationId=get_random_id(),
-        title="Ut enim ad minim veniam.",
+        title="Vendor Documentation Analysis and Integration Requirements",
         updatedAt="2024-12-31T09:10:15Z",
         createdAt="2024-12-31T09:10:15Z",
         messages= [
@@ -1244,7 +1272,7 @@ mock_conversations = [
                 messageId=get_random_id(),
                 sender="assistant",
                 senderType="bot",
-                content="Hello! 👋 I'm your Vespa AI assistant. I can help you explore and analyze your data using your knowledge base and Elasticsearch.<br><br>",
+                content="Hello! 👋 I'm your Wilab AI assistant. I can help you explore and analyze your data using your knowledge base and Elasticsearch.<br><br>",
                 timestamp="2024-01-01T00:00:00Z"
             ),
             ChatMessage(

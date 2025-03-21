@@ -29,7 +29,7 @@ def NavigationTab(section: str, is_admin: bool = False):
         A(
             Div(
                 Lucide("cable", cls="w-4 h-4 text-black dark:text-white"),
-                "Vespa Connection",
+                "Wilab Connection",
                 cls=f"flex items-center gap-2 text-lg {'font-medium' if section == 'connection-settings' else 'font-light'} text-black dark:text-white mb-2 cursor-pointer hover:opacity-80",
             ),
             href="/settings/connection-settings",
