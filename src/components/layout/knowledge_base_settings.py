@@ -16,9 +16,9 @@ def KnowledgeBaseSettings(knowledge_bases=None):
     if knowledge_bases is None:
         knowledge_bases = []
 
-    sorted_knowledge_bases = sorted(knowledge_bases, 
-        key=lambda kb: ( 
-            kb.title.lower() 
+    sorted_knowledge_bases = sorted(knowledge_bases,
+        key=lambda kb: (
+            kb.title.lower()
         )
     )
 
@@ -45,17 +45,20 @@ def KnowledgeBaseSettings(knowledge_bases=None):
     ]
 
     header_actions = [
-        AddButton(
-            button_text="Add new",
-            endpoint="/settings/knowledge-base/new"
+        Button(
+            "Add new",
+            type="button",
+            cls="flex items-center px-4 py-2 border border-gray-300 dark:text-white dark:border-gray-600 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800",
+            **{"onclick": "document.getElementById('bulk-upload-input').click()"}
         ),
         Form(
             Input(
                 type="file",
                 name="csv_file",
-                accept=".csv",
+                accept="",
                 cls="hidden",
                 id="bulk-upload-input",
+                multiple=True,
                 **{
                     "hx-post": "/api/knowledge-base/bulk",
                     "hx-target": "#settings-page",

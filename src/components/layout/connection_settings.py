@@ -3,27 +3,38 @@ from src.components.common.heading import SettingsHeading
 from src.components.common.text_input import TextInput
 from src.components.common.action_buttons import CancelButton, SaveButton
 
-def ConnectionSettings(endpoint_value=""):
+def ConnectionSettings(endpoint_value="", gemini_api_key_value=""):
     return Div(
         Div(
             SettingsHeading("Connection Settings"),
             Form(
                 Div(
                     Label(
-                        "Assistant Webservice Endpoint",
+                        "Wilab Agent connection URL",
                         cls="block text-base font-medium text-gray-700 dark:text-gray-300 mb-2"
                     ),
                     TextInput(
                         type="text",
                         name="endpoint",
-                        placeholder="Enter Wilab connection URL",
+                        placeholder="Enter Wilab Agent connection URL",
                         value=endpoint_value,
                         autofocus=not endpoint_value,
                         id="endpoint-input"
                     ),
+                    Label(
+                        "Gemini API Key",
+                        cls="block text-base font-medium text-gray-700 dark:text-gray-300 mb-2 mt-4"
+                    ),
+                    TextInput(
+                        type="text",
+                        name="gemini_api_key",
+                        placeholder="Enter Gemini API Key",
+                        id="gemini-api-key",
+                        value=gemini_api_key_value
+                    ),
                     Div(
                         CancelButton(),
-                        SaveButton(),
+                        SaveButton("connection-settings-save-button"),
                         cls="flex justify-end mt-6 gap-2"
                     ),
                     cls="max-w-6xl"

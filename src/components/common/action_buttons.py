@@ -86,9 +86,10 @@ def CancelButton(type="reset", **kwargs):
         **kwargs
     )
 
-def SaveButton():
+def SaveButton(id=""):
     return ButtonSecondary(
         "Save",
         type="submit",
-        cls="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-100"
+        cls="bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-100",
+        id=id
     )

@@ -1,3 +1,4 @@
 {
-  "connection_endpoint": "http://localhost:8080"
+  "connection_endpoint": "http://localhost:8080",
+  "gemini_api_key": "1234"
 }

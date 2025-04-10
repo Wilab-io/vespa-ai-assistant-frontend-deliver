@@ -6,7 +6,7 @@ class ConfigService:
         self.config_file = Path("config/config.json")
         self.config_file.parent.mkdir(exist_ok=True)
         if not self.config_file.exists():
-            self._save({"connection_endpoint": ""})
+            self._save({"connection_endpoint": "", "gemini_api_key": ""})
 
     def _save(self, config: dict):
         self.config_file.write_text(json.dumps(config, indent=2))
@@ -17,7 +17,11 @@ class ConfigService:
     def get_connection_endpoint(self) -> str:
         return self._load().get("connection_endpoint", "")
 
-    def update_connection_endpoint(self, endpoint: str):
+    def get_gemini_api_key(self) -> str:
+        return self._load().get("gemini_api_key", "")
+
+    def update_connection_settings(self, endpoint: str, gemini_api_key: str):
         config = self._load()
         config["connection_endpoint"] = endpoint
+        config["gemini_api_key"] = gemini_api_key
         self._save(config)

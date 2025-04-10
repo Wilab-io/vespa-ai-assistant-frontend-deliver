@@ -277,10 +277,11 @@ def setup_routes(app, rt):
             )
 
         endpoint_value = request.app.config_service.get_connection_endpoint()
+        gemini_api_key_value = request.app.config_service.get_gemini_api_key()
         return await Settings(
             request,
             "connection-settings",
-            content=ConnectionSettings(endpoint_value=endpoint_value)
+            content=ConnectionSettings(endpoint_value=endpoint_value, gemini_api_key_value=gemini_api_key_value)
         )
 
     @rt("/api/conversations/{conversation_id}", methods=["DELETE"])
@@ -395,12 +396,13 @@ def setup_routes(app, rt):
         try:
             form_data = await request.form()
             endpoint = form_data.get("endpoint", "")
-            request.app.config_service.update_connection_endpoint(endpoint)
+            gemini_api_key = form_data.get("gemini_api_key", "")
+            request.app.config_service.update_connection_settings(endpoint, gemini_api_key)
             await request.app.client.update_base_url()
             return await Settings(
                 request,
                 "connection-settings",
-                content=ConnectionSettings(endpoint_value=endpoint),
+                content=ConnectionSettings(endpoint_value=endpoint, gemini_api_key_value=gemini_api_key),
                 success_messages=["Connection settings saved successfully"]
             )
         except Exception as e:
@@ -408,7 +410,7 @@ def setup_routes(app, rt):
             return await Settings(
                 request,
                 "connection-settings",
-                content=ConnectionSettings(endpoint_value=endpoint),
+                content=ConnectionSettings(endpoint_value=endpoint, gemini_api_key_value=gemini_api_key),
                 error_messages=[str(e)]
             )
 
