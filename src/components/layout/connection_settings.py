@@ -26,7 +26,7 @@ def ConnectionSettings(endpoint_value="", gemini_api_key_value=""):
                         cls="block text-base font-medium text-gray-700 dark:text-gray-300 mb-2 mt-4"
                     ),
                     TextInput(
-                        type="text",
+                        type="password",
                         name="gemini_api_key",
                         placeholder="Enter Gemini API Key",
                         id="gemini-api-key",
