@@ -7,6 +7,7 @@ import os
 import logging
 import asyncio
 from src.services.api.types import AuthResponse, AuthResult, ErrorResponse, User, ConversationRequest, NewConversationResponse, Conversation, ChatMessage, ConversationsResponse, UsersResponse, User, ConversationResult, ConversationsResult, LLM, LLMsResponse, LLMsResult, NewConversationResult, UserResult, GenericActionResponse, GenericActionResult, UsersResult, KnowledgeBase, KnowledgeBasesResponse, KnowledgeBasesResult, KnowledgeBaseResult
+from src.services.config.config_service import ConfigService
 
 app = FastAPI(title="Mock Wilab Agent API")
 logger = logging.getLogger("Wilab_app")
@@ -14,6 +15,9 @@ logger = logging.getLogger("Wilab_app")
 default_url = "http://localhost:8080"
 use_mock = os.getenv("MOCK_API", "false").lower() == "true"
 app.base_url = default_url if use_mock else os.getenv("Wilab_AGENT_URL", default_url)
+
+# Initialize config service
+app.config_service = ConfigService()
 
 EVENT_CONTENT = "content"
 EVENT_END_OF_RESPONSE = "end_of_response"
@@ -122,6 +126,12 @@ def get_user_by_id(user_id: str) -> User:
 async def get_llms(authorization: str = Header(None)) -> LLMsResult:
     if not verify_token(authorization):
         return raise_error("UNAUTHORIZED", "Cannot get LLMs list: Missing or invalid authorization token", 401)
+
+    # Filter out Gemini if API key isn't set
+    gemini_api_key = app.config_service.get_gemini_api_key()
+    if not gemini_api_key:
+        filtered_llms = [llm for llm in mock_llms.llms if llm.id != "gemini"]
+        return LLMsResponse(llms=filtered_llms)
 
     return mock_llms
 
@@ -460,6 +470,8 @@ def get_random_id():
     return os.urandom(8).hex()
 
 if __name__ == "__main__":
+    app = FastAPI(title="Mock Wilab Agent API")
+    app.config_service = ConfigService()
     uvicorn.run(app, host="0.0.0.0", port=8080)
 
 mock_users = [

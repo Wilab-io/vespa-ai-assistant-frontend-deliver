@@ -1045,6 +1045,7 @@ def setup_routes(app, rt):
     def _parse_llm_options(request: Request, llms: LLMsResponse):
         selected_llm = request.session.get("selected-llm")
         llms = llms.llms
+
         if not selected_llm and llms:
             selected_llm = llms[0].id
             request.session["selected-llm"] = selected_llm
