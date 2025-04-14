@@ -8,6 +8,7 @@ import logging
 import asyncio
 from src.services.api.types import AuthResponse, AuthResult, ErrorResponse, User, ConversationRequest, NewConversationResponse, Conversation, ChatMessage, ConversationsResponse, UsersResponse, User, ConversationResult, ConversationsResult, LLM, LLMsResponse, LLMsResult, NewConversationResult, UserResult, GenericActionResponse, GenericActionResult, UsersResult, KnowledgeBase, KnowledgeBasesResponse, KnowledgeBasesResult, KnowledgeBaseResult
 from src.services.config.config_service import ConfigService
+from src.services.mock.gemini_service import GeminiService
 
 app = FastAPI(title="Mock Wilab Agent API")
 logger = logging.getLogger("Wilab_app")
@@ -92,6 +93,69 @@ async def chat_endpoint(request: ConversationRequest, authorization: str = Heade
     if not request.conversationId:
         return raise_error("BAD_REQUEST", "Missing conversation ID", 400)
 
+    # Get the selected LLM from the session
+    selected_llm = request.llmId
+
+    # If Gemini is selected, use the real API
+    if selected_llm == "gemini":
+        # Find or create conversation
+        conversation = next((c for c in mock_conversations if c.conversationId == request.conversationId), None)
+        if not conversation:
+            conversation = Conversation(
+                conversationId=request.conversationId,
+                title=request.query[:50] + "..." if len(request.query) > 50 else request.query,
+                messages=[],
+                createdAt=datetime.now().isoformat(),
+                updatedAt=datetime.now().isoformat()
+            )
+            mock_conversations.append(conversation)
+        elif not conversation.messages:
+            conversation.title = request.query[:50] + "..." if len(request.query) > 50 else request.query
+
+        # Add user message
+        user_message = ChatMessage(
+            messageId=get_random_id(),
+            sender="user",
+            senderType="user",
+            content=request.query,
+            timestamp=datetime.now().isoformat()
+        )
+        conversation.messages.append(user_message)
+
+        async def stream_gemini_response():
+            try:
+                gemini_service = GeminiService(app.config_service.get_gemini_api_key())
+                bot_message = ChatMessage(
+                    messageId=get_random_id(),
+                    sender="assistant",
+                    senderType="bot",
+                    content="",
+                    timestamp=datetime.now().isoformat()
+                )
+                conversation.messages.append(bot_message)
+
+                async for line in gemini_service.stream_response(request.conversationId, request.query):
+                    bot_message.content += line + "\n"
+                    yield f"event: {EVENT_CONTENT}\ndata: {line}\n\n"
+
+                yield f"event: {EVENT_END_OF_RESPONSE}\ndata: \n\n"
+            except Exception as e:
+                logger.error(f"Failed to use Gemini: {str(e)}")
+                error_message = "I apologize, but I'm unable to use Gemini at the moment. This could be due to an invalid or missing API key. Please check your Gemini API key configuration."
+                bot_message = ChatMessage(
+                    messageId=get_random_id(),
+                    sender="assistant",
+                    senderType="bot",
+                    content=error_message,
+                    timestamp=datetime.now().isoformat()
+                )
+                conversation.messages.append(bot_message)
+                yield f"event: {EVENT_CONTENT}\ndata: {error_message}\n\n"
+                yield f"event: {EVENT_END_OF_RESPONSE}\ndata: \n\n"
+
+        return StreamingResponse(stream_gemini_response(), media_type="text/event-stream")
+
+    # For other LLMs, use the mock response
     conversation = next((c for c in mock_conversations if c.conversationId == request.conversationId), None)
     if conversation and not conversation.messages:
         conversation.title = request.query

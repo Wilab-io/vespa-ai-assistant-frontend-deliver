@@ -17,7 +17,8 @@ class WilabAgentClient:
 
     def _create_client(self) -> httpx.AsyncClient:
         return httpx.AsyncClient(
-            base_url=self.base_url if not self.use_mock else "http://localhost:8080"
+            base_url=self.base_url if not self.use_mock else "http://localhost:8080",
+            timeout=60.0  # 60 seconds timeout
         )
 
     async def update_base_url(self):
@@ -101,7 +102,15 @@ class WilabAgentClient:
             conversationId=conversation_id
         )
 
-        async with httpx.AsyncClient() as client:
+        # Use httpx.Timeout to set different timeouts for different operations
+        timeouts = httpx.Timeout(
+            connect=10.0,  # connection timeout
+            read=60.0,    # read timeout
+            write=10.0,   # write timeout
+            pool=10.0     # pool timeout
+        )
+
+        async with httpx.AsyncClient(timeout=timeouts) as client:
             try:
                 async with client.stream(
                     "POST",
@@ -117,22 +126,38 @@ class WilabAgentClient:
                     if response.status_code != 200:
                         error_content = await response.aread()
                         self.logger.error(f"Response error content: {error_content.decode()}")
+                        yield f"event: content\ndata: An error occurred: {error_content.decode()}\n\n"
+                        yield "event: end_of_response\ndata: \n\n"
                         return
 
                     buffer = []
-                    async for chunk in response.aiter_bytes():
-                        chunk_str = chunk.decode()
-                        buffer.append(chunk_str)
+                    try:
+                        async for chunk in response.aiter_bytes():
+                            chunk_str = chunk.decode()
+                            buffer.append(chunk_str)
 
-                        # If we have a complete message (ends with double newline)
-                        if '\n\n' in chunk_str:
-                            message = ''.join(buffer)
-                            yield message
-                            buffer = []
+                            # If we have a complete message (ends with double newline)
+                            if '\n\n' in chunk_str:
+                                message = ''.join(buffer)
+                                yield message
+                                buffer = []
+                    except httpx.ReadTimeout:
+                        self.logger.error("Read timeout while streaming response")
+                        yield "event: content\ndata: The response took too long. Please try again.\n\n"
+                        yield "event: end_of_response\ndata: \n\n"
+                    except Exception as e:
+                        self.logger.error(f"Error while streaming response: {str(e)}")
+                        yield f"event: content\ndata: An error occurred while processing the response: {str(e)}\n\n"
+                        yield "event: end_of_response\ndata: \n\n"
 
+            except httpx.ConnectTimeout:
+                self.logger.error("Connection timeout")
+                yield "event: content\ndata: Could not connect to the server. Please try again.\n\n"
+                yield "event: end_of_response\ndata: \n\n"
             except Exception as e:
                 self.logger.error(f"Error in stream_conversation: {str(e)}")
-                raise
+                yield f"event: content\ndata: An error occurred: {str(e)}\n\n"
+                yield "event: end_of_response\ndata: \n\n"
 
     async def get_conversations(self, token: str) -> ConversationsResult:
         """
