@@ -777,10 +777,6 @@ body {
   left: 0.5rem;
 }
 
-.left-4 {
-  left: 1rem;
-}
-
 .left-80 {
   left: 20rem;
 }
@@ -1070,6 +1066,10 @@ body {
   height: 55px;
 }
 
+.h-\[70px\] {
+  height: 70px;
+}
+
 .h-\[calc\(100vh-55px\)\] {
   height: calc(100vh - 55px);
 }
@@ -1180,11 +1180,6 @@ body {
 
 .w-\[250px\] {
   width: 250px;
-}
-
-.w-fit {
-  width: -moz-fit-content;
-  width: fit-content;
 }
 
 .w-full {
@@ -1476,10 +1471,6 @@ body {
 
 .rounded-\[10px\] {
   border-radius: 10px;
-}
-
-.rounded-\[16px\] {
-  border-radius: 16px;
 }
 
 .rounded-\[inherit\] {

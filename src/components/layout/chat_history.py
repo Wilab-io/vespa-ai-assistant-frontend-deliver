@@ -19,7 +19,7 @@ def ChatHistory(conversations: List[Conversation] = None):
                     "Recent Chats",
                     cls="text-xl font-normal text-black dark:text-white px-4"
                 ),
-                cls="flex items-center justify-between mb-4"
+                cls="flex items-center justify-between mb-4 mt-4"
             ),
             Div(
                 "No recent chats" if not items else "",
