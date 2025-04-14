@@ -68,7 +68,7 @@ class GeminiService:
             yield f"I apologize, but I encountered an error: {str(e)}. Please try again."
 
     async def _get_response(self, chat, query: str, max_retries: int = 3) -> str:
-        prompt_with_rule = f"Please follow this rule in your response: You are an HTML code renderer, every one of your answers should contain only HTML code. We already have the HTML initialization and headers, you are responsible for the body only. Don't wrap your response in ```html tags as it will break my HTML code when concatenating your response to it. You are only allowed to use: <strong> <br> <ul> <li>, specific colors for some keywords and emojis. You are not allowed to repeat the user's query in your response. Here is the user's query: {query}"
+        prompt_with_rule = f"Please follow this rule in your response: You are an HTML code renderer, every one of your answers should contain only HTML code. We already have the HTML initialization and headers, you are responsible for the body only. Don't wrap your response in ```html tags as it will break my HTML code when concatenating your response to it. You are only allowed to use: <strong> <br> <ul> <li> and emojis. You are not allowed to repeat the user's query in your response. Here is the user's query: {query}"
         for attempt in range(max_retries):
             try:
                 response = chat.send_message(prompt_with_rule)
