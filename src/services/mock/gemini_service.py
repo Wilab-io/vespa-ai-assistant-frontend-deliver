@@ -19,16 +19,38 @@ class GeminiService:
             logger.error(f"Failed to initialize Gemini client: {str(e)}")
             raise
 
+    def _format_message_for_history(self, role: str, content: str) -> dict:
+        # Clean and validate content
+        cleaned_content = content.strip() if content else ""
+        if not cleaned_content:
+            return None
+
+        # Format message according to Gemini's requirements
+        return {"role": role, "parts": [{"text": cleaned_content}]}
+
     async def stream_response(self, conversation_id: str, query: str) -> AsyncGenerator[str, None]:
         if not self.model:
             raise Exception("Gemini client not initialized")
 
         try:
-            chat = self.model.start_chat(history=[])
+            # Get conversation history from mock_conversations
+            from .api import mock_conversations
+            conversation = next((c for c in mock_conversations if c.conversationId == conversation_id), None)
+            history = []
+
+            if conversation and conversation.messages:
+                for msg in conversation.messages:
+                    role = "user" if msg.senderType == "user" else "model"
+                    formatted_msg = self._format_message_for_history(role, msg.content)
+                    if formatted_msg:  # Only add non-empty messages
+                        history.append(formatted_msg)
+
+            # Create a new chat with valid history
+            chat = self.model.start_chat(history=history) if history else self.model.start_chat()
 
             response = await asyncio.wait_for(
                 self._get_response(chat, query),
-                timeout=45.0  # Increased timeout to 45 seconds
+                timeout=45.0
             )
 
             # Split response into lines and stream them
@@ -46,7 +68,7 @@ class GeminiService:
             yield f"I apologize, but I encountered an error: {str(e)}. Please try again."
 
     async def _get_response(self, chat, query: str, max_retries: int = 3) -> str:
-        prompt_with_rule = f"Please follow this rule in your response: You are an HTML code renderer, every one of your answers should contain only HTML code. Format every answer to be a valid HTML code that you could put inside the body tag, don't add additional text to your response, we already have the HTML initialization and headers, you are responsible for the body only. Don't add ``` to your response. You are allowed to use: <strong> <br> <ul> <li>, specific colors and emojis. Here is the user's query: {query}"
+        prompt_with_rule = f"Please follow this rule in your response: You are an HTML code renderer, every one of your answers should contain only HTML code. We already have the HTML initialization and headers, you are responsible for the body only. Don't wrap your response in ```html tags as it will break my HTML code when concatenating your response to it. You are only allowed to use: <strong> <br> <ul> <li>, specific colors and emojis. Here is the user's query: {query}"
         for attempt in range(max_retries):
             try:
                 response = chat.send_message(prompt_with_rule)
